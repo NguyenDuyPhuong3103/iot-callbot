@@ -1,0 +1,7 @@
+{
+    "private": true,
+    "name": "iot-callbot-node",
+    "workspaces": [
+        "packages/*"
+    ]
+}
