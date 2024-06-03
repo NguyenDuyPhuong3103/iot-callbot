@@ -10,7 +10,13 @@ import {
 
 router.get("/", DocumentationController.readDocumentations);
 router.use(verifyUserAccessToken, isAdmin);
-router.post("/", DocumentationController.createDocumentation);
-router.patch("/:id", DocumentationController.editDocumentation);
+router.post(
+  "/createDocumentation",
+  DocumentationController.createDocumentation
+);
+router.patch(
+  "/editDocumentation/:id",
+  DocumentationController.editDocumentation
+);
 
 export default router;

@@ -1,0 +1,1730 @@
+openapi: 3.0.3
+info:
+  title: iot-callbot-node
+  description: |-
+
+  contact:
+    email: nguyenduyphuong3103@gmail.com
+  version: 1.0.11
+servers:
+  - url: http://localhost:8000/api/
+tags:
+  - name: user
+    description: Operations about user
+  - name: project
+    description: user's projects
+  - name: service
+    description: project's services
+  - name: contact
+  - name: documentation
+paths:
+  /user/register:
+    post:
+      tags:
+        - user
+      summary: Register
+      description: Users do not have an account yet
+      operationId: registerUser
+      requestBody:
+        description: Register user object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegister"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/UserRegister"
+      responses:
+        default:
+          description: successful registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Register successfully!!!"
+                  resData:
+                    $ref: "#/components/schemas/SentMail"
+  /user/confirmRegisterUser/{confirmUserToken}:
+    get:
+      tags:
+        - user
+      summary: confirm register
+      description: "Confirm user registration via email"
+      operationId: confirmRegisterUser
+      parameters:
+        - name: confirmUserToken
+          in: path
+          description: "The confirmUserToken that needs to be fetched. "
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Account confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Account confirmed successfully !!!"
+                  resData:
+                    $ref: "#/components/schemas/ConfirmUser"
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Log in
+      description: "Logs user into the system"
+      operationId: loginUser
+      requestBody:
+        description: Login user object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+        required: true
+      responses:
+        default:
+          description: Account confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Logged in successfully!!!"
+                  resData:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUzOTM2MTY0LTdjYWYtNDgwZC05NDlmLTdkODIyZWRlNGE2MSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzE2MTc2OTQ3LCJleHAiOjE3MTYxODA1NDd9.Mn-iR79rUpX4R-lj1y5JpqQCLHQiFNrg-CwuJHMCC4o"
+                      isEmailExist:
+                        $ref: "#/components/schemas/ConfirmUser"
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Log out
+      description: "Logs out current logged in user session"
+      operationId: logoutUser
+      security:
+        - BearerAuth: []
+      responses:
+        default:
+          description: Account confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "You have successfully logged out !!!"
+  /user/refreshToken:
+    get:
+      tags:
+        - user
+      summary: Refresh token
+      description: "Refresh token user"
+      operationId: refreshToken
+      responses:
+        default:
+          description: Updated refresh token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Update refreshToken successfully!!!"
+                  resData:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUzOTM2MTY0LTdjYWYtNDgwZC05NDlmLTdkODIyZWRlNGE2MSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzE2MTg5NjQ2LCJleHAiOjE3MTYxOTMyNDZ9.M4shoxhR_mAuy27_UptqgTR2nOVUk__jDwmWpBIyKvg"
+  /user/changePassword:
+    patch:
+      tags:
+        - user
+      summary: Change password
+      description: Change password user to server
+      operationId: Change user password
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Change password user object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePassword"
+        required: true
+      responses:
+        default:
+          description: Changed refresh token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Changed password successfully!!!"
+  /user/forgotPassword:
+    get:
+      tags:
+        - user
+      summary: Forgot password
+      description: "Forgot password user"
+      operationId: forgotPassword
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+          description: Email of user need to reset password
+      responses:
+        default:
+          description: successful registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resData:
+                    $ref: "#/components/schemas/SentMail"
+  /user/verifyForgotPassword/{resetToken}:
+    get:
+      tags:
+        - user
+      summary: Verify forgot password
+      description: "Check the token to authenticate the user"
+      operationId: verifyForgotPassword
+      parameters:
+        - name: resetToken
+          in: path
+          description: "The resetToken that needs to be fetched. "
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Valid OTP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: Valid OTP
+                  resData:
+                    type: string
+                    example: "e3936164-7caf-480d-949f-7d822ede4a61"
+  /user/resetPassword/{id}:
+    put:
+      tags:
+        - user
+      summary: Reset password
+      description: Reset password user
+      operationId: resetPassword
+      parameters:
+        - name: id
+          in: path
+          description: "id of user"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: new password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                  example: "777"
+        required: true
+      responses:
+        default:
+          description: Account confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Password changed successfully !!!"
+                  resData:
+                    $ref: "#/components/schemas/UserRegister"
+  /user/updateProfile:
+    put:
+      tags:
+        - user
+      summary: Reset password
+      description: Reset password user
+      operationId: resetPassword
+      parameters:
+        - name: id
+          in: path
+          description: "id of user"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: new password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                  example: "777"
+        required: true
+      responses:
+        default:
+          description: Account confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Password changed successfully !!!"
+                  resData:
+                    $ref: "#/components/schemas/UserRegister"
+  /service:
+    get:
+      tags:
+        - service
+      summary: See all services
+      description: "See all services"
+      operationId: readService
+      responses:
+        default:
+          description: found services
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Find service successfully !!!"
+                  resData:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Service"
+  /service/activateService:
+    patch:
+      tags:
+        - service
+      summary: Active service
+      description: Active service
+      operationId: activateService
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                serviceId:
+                  type: string
+                  example: "51087e3b-5d99-4e64-a2ec-3c474a5461fd"
+                projectId:
+                  type: string
+                  example: "bd4855fb-0843-49eb-9427-8725bffc2538"
+        required: true
+      responses:
+        default:
+          description: found services
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Service has been activated !!!"
+  /service/deactivateService:
+    patch:
+      tags:
+        - service
+      summary: Deactivate service
+      description: Deactivate service
+      operationId: deactivateService
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                serviceId:
+                  type: string
+                  example: "51087e3b-5d99-4e64-a2ec-3c474a5461fd"
+                projectId:
+                  type: string
+                  example: "bd4855fb-0843-49eb-9427-8725bffc2538"
+        required: true
+      responses:
+        default:
+          description: found services
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Service has been deactivated !!!"
+  /service/createServiceByUser/{projectId}/{serviceId}:
+    post:
+      tags:
+        - service
+      summary: Create service by userId
+      description: "Create service by user"
+      operationId: createServiceByUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          description: "id of project"
+          required: true
+          schema:
+            type: string
+        - name: serviceId
+          in: path
+          description: "id of service"
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Created service by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Service registration successfully!!!"
+                  resData:
+                    $ref: "#/components/schemas/ServiceByUser"
+
+  /service/editServiceByUser/{projectId}/{serviceId}:
+    patch:
+      tags:
+        - service
+      summary: Edit service by userId
+      description: "Edit service by user"
+      operationId: editServiceByUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          description: "id of project"
+          required: true
+          schema:
+            type: string
+        - name: serviceId
+          in: path
+          description: "id of service"
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Edited service by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "The data has been updated!!!"
+
+  /project:
+    get:
+      tags:
+        - project
+      summary: See all projects
+      description: "See all projects"
+      operationId: readProjects
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: The page number for pagination
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: The maximum number of users per page
+        - in: query
+          name: projectId
+          required: false
+          schema:
+            type: string
+            minimum: 1
+          description: The projectId for find project
+      responses:
+        default:
+          description: found projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Find projects successfully !!!"
+                  resData:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ReadProjects"
+
+  /project/createProject:
+    post:
+      tags:
+        - project
+      summary: Create project by userId
+      description: "Create project by user"
+      operationId: createProjectByUser
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "first name"
+      responses:
+        default:
+          description: Created service by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Service registration successfully!!!"
+                  resData:
+                    type: object
+                    properties:
+                      newProject:
+                        type: object
+                        $ref: "#/components/schemas/CreateProject"
+                      accessProjectToken:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM5ZjFjYWY3LTJiNDktNDJjNi05YzhmLTAyY2Y1Y2ZhNTU4OCIsImlhdCI6MTcxNjM1MDQ1MCwiZXhwIjoxNzE2MzU0MDUwfQ.dXPgrEi12q7Z1grG64GMcngkJDn5PZ3syP3jDxO--fw"
+
+  /project/projectDetail/{id}:
+    get:
+      tags:
+        - project
+      summary: See detail of project
+      description: "See detail of project"
+      operationId: readProject
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          description: "id of project"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date
+                  example: 2024-04-01
+                endDate:
+                  type: string
+                  format: date
+                  example: 2024-04-01
+      responses:
+        default:
+          description: found project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Get data successfully!!!"
+                  resData:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GetProjects"
+
+  /project/editProject/{projectId}:
+    patch:
+      tags:
+        - project
+      summary: Edit project by id
+      description: "Edit project by id"
+      operationId: editProject
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          description: "id of project"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "new name"
+      responses:
+        default:
+          description: Edited project by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "The data has been updated!!!"
+
+  /project/refreshProjectToken:
+    get:
+      tags:
+        - project
+      summary: Refresh token
+      description: "Refresh token project"
+      operationId: refreshProjectToken
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "000"
+      responses:
+        default:
+          description: Updated refresh token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Update refreshToken successfully!!!"
+                  resData:
+                    type: object
+                    properties:
+                      accessProjectToken:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUzOTM2MTY0LTdjYWYtNDgwZC05NDlmLTdkODIyZWRlNGE2MSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzE2MTg5NjQ2LCJleHAiOjE3MTYxOTMyNDZ9.M4shoxhR_mAuy27_UptqgTR2nOVUk__jDwmWpBIyKvg"
+
+  /project/projectHistory/{id}:
+    get:
+      tags:
+        - project
+      summary: See project's history
+      description: "See project's history"
+      operationId: projectHistory
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: projectId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The projectId of user
+        - in: query
+          name: startDate
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: The start day
+        - in: query
+          name: endDate
+          required: false
+          schema:
+            type: string
+            minimum: 1
+          description: The end day
+      responses:
+        default:
+          description: found history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Get data successfully !!!"
+                  resData:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/History"
+
+  /contact:
+    get:
+      tags:
+        - contact
+      summary: See all contacts
+      description: "See all contacts"
+      operationId: readContacts
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: The page number for pagination
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: The maximum number of users per page
+        - in: query
+          name: yourMessage
+          required: false
+          schema:
+            type: string
+            minimum: 1
+          description: The message to find contact
+        - in: query
+          name: fullName
+          required: false
+          schema:
+            type: string
+            minimum: 1
+          description: The name to find contact
+      responses:
+        default:
+          description: found contacts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Find contacts successfully !!!"
+                  resData:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ReadProjects"
+
+  /contact/createContact:
+    post:
+      tags:
+        - contact
+      summary: Create contact
+      description: "Create contact"
+      operationId: createContact
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contact"
+      responses:
+        default:
+          description: Created service by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Service registration successfully!!!"
+                  resData:
+                    type: object
+                    properties:
+                      newContact:
+                        type: object
+                        $ref: "#/components/schemas/Contact"
+
+  /documentation:
+    get:
+      tags:
+        - documentation
+      summary: See all documentations
+      description: "See all documentations"
+      operationId: readDocumentations
+      responses:
+        default:
+          description: found documentations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Find documentations successfully !!!"
+  /documentation/createDocumentation:
+    post:
+      tags:
+        - documentation
+      summary: Create documentation
+      description: "Create documentation"
+      operationId: createDocumentation
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Documentation"
+      responses:
+        default:
+          description: Created service by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Service registration successfully!!!"
+                  resData:
+                    type: object
+                    properties:
+                      newDocumentation:
+                        type: object
+                        $ref: "#/components/schemas/Documentation"
+
+  /documentation/editDocumentation/{id}:
+    patch:
+      tags:
+        - documentation
+      summary: Edit documentation by documentationId
+      description: "Edit documentation by documentationId"
+      operationId: editDocumentation
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: documentationId
+          in: path
+          description: "id of documentation"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Documentation"
+      responses:
+        default:
+          description: Edited documentation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "The data has been updated!!!"
+
+  /admin/readUsers:
+    get:
+      tags:
+        - admin
+      summary: See all Users
+      description: "See all Users"
+      operationId: readUsers
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: The page number for pagination
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: The maximum number of users per page
+        - in: query
+          name: userId
+          required: false
+          schema:
+            type: string
+            minimum: 1
+          description: The userId for find User
+        - in: query
+          name: user's name
+          required: false
+          schema:
+            type: string
+            minimum: 1
+          description: The name of user
+      responses:
+        default:
+          description: found Users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Find Users successfully !!!"
+                  resData:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ReadUsers"
+
+  /admin/readProfile/{id}:
+    get:
+      tags:
+        - admin
+      summary: See user's profile
+      description: "See user's profile"
+      operationId: readProfile
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: page
+          required: true
+          schema:
+            type: string
+            example: e3936164-7caf-480d-949f-7d822ede4a61
+          description: Id of user
+      responses:
+        default:
+          description: found information user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "Found information successfully !!!"
+                  resData:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UserRegister"
+
+  /admin/editUserEmail/{id}:
+    patch:
+      tags:
+        - admin
+      summary: Edit user email by id
+      description: "Edit user email by id"
+      operationId: editUserEmail
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: "id of user"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "nguyenduyphuong3103@gmail.com"
+      responses:
+        default:
+          description: Edited user by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "The data has been updated!!!"
+
+  /admin/lockUser/{id}:
+    patch:
+      tags:
+        - admin
+      summary: Lock user email by id
+      description: "Lock user email by id"
+      operationId: lockUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: "id of user"
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Locked user by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "User has been deactivated !!!"
+
+  /admin/unLockUser/{id}:
+    patch:
+      tags:
+        - admin
+      summary: Unlock user email by id
+      description: "Unlock user email by id"
+      operationId: unLockUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: "id of user"
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: Unlocked user by user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "User has been activated  !!!"
+
+  /admin/createServiceByAdmin:
+    post:
+      tags:
+        - admin
+      summary: Create service
+      description: "Create service"
+      operationId: createServiceByAdmin
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceByAdmin"
+      responses:
+        default:
+          description: Created service by admin
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Service registration successfully!!!"
+                  resData:
+                    $ref: "#/components/schemas/ServiceByAdmin"
+
+  /admin/deleteUser/{userId}:
+    delete:
+      tags:
+        - admin
+      summary: Delete user by user id
+      description: ""
+      operationId: deleteUserById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: "The id that needs to be fetched. Use 5fa5e7e9-170d-4172-94e8-948e0e72bfa6 for testing. "
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "000"
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Delete user successfully !!! !!!"
+
+  /admin/deleteService/{id}:
+    delete:
+      tags:
+        - admin
+      summary: Delete service by service id
+      description: ""
+      operationId: deleteServiceById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          description: "The id that needs to be fetched"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "000"
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Delete service successfully !!! !!!"
+
+  /admin/deleteProject/{id}:
+    delete:
+      tags:
+        - admin
+      summary: Delete project by project id
+      description: ""
+      operationId: deleteProjectById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: serviceId
+          in: path
+          description: "The id that needs to be fetched"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "000"
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+                        example: "true"
+                      message:
+                        type: string
+                        example: "Delete project successfully !!! !!!"
+components:
+  schemas:
+    Service:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "service 1"
+        introduction:
+          type: string
+          example: "tạo cuộc hội thoại trò chuyện trên skype"
+        information:
+          type: string
+          example: "tạo cuộc hội thoại trò chuyện trên skype"
+        price:
+          type: string
+          example: "123456"
+      xml:
+        name: service
+
+    ServiceByUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "service 1"
+        sumData:
+          type: number
+          example: 0
+        sumCost:
+          type: number
+          example: 0
+        unpaid:
+          type: number
+          example: null
+        inProject:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "bd4855fb-0843-49eb-9427-8725bffc2538"
+      xml:
+        name: service
+
+    ServiceByAdmin:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "service 1"
+        introduction:
+          type: string
+          example: "tạo cuộc hội thoại trò chuyện trên skype"
+        information:
+          type: string
+          example: "tạo cuộc hội thoại trò chuyện trên skype"
+        price:
+          type: number
+          example: 1000
+        createdAt:
+          type: string
+          example: "2024-05-22T04:00:50.285Z"
+        updatedAt:
+          type: string
+          example: "2024-05-22T04:00:50.285Z"
+      xml:
+        name: admin
+
+    Documentation:
+      type: object
+      properties:
+        overview:
+          type: string
+          example: "documentation 1"
+        services:
+          type: string
+          example: "services"
+        pricingPolicies:
+          type: string
+          example: "pricingPolicies"
+        privacyPolicies:
+          type: string
+          example: "privacyPolicies"
+        termOfServices:
+          type: string
+          example: "termOfServices"
+        FAQs:
+          type: string
+          example: "FAQs"
+      xml:
+        name: documentation
+
+    History:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "service 1"
+        Content:
+          type: string
+          example: "Text 1"
+        cost:
+          type: number
+          example: 1000
+        createdAt:
+          type: string
+          example: "2024-05-22T04:00:50.285Z"
+      xml:
+        name: service
+
+    CreateProject:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "first name"
+        createdBy:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "e3936164-7caf-480d-949f-7d822ede4a61"
+        refreshProjectToken:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM5ZjFjYWY3LTJiNDktNDJjNi05YzhmLTAyY2Y1Y2ZhNTU4OCIsImlhdCI6MTcxNjM1MDQ1MCwiZXhwIjoxNzE2MzUwODEwfQ.qAJXuLKit-0pfMxOZodjaAF_09F_0cm05dUvNFXEgcA"
+        id:
+          type: string
+          example: "39f1caf7-2b49-42c6-9c8f-02cf5cfa5588"
+        unpaid:
+          type: number
+          example: null
+        createdAt:
+          type: string
+          example: "2024-05-22T04:00:50.285Z"
+        updatedAt:
+          type: string
+          example: "2024-05-22T04:00:50.285Z"
+      xml:
+        name: object
+
+    GetProjects:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "first name"
+        sumCost:
+          type: number
+          example: 0
+        isActed:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          example: "2024-05-22T04:00:50.285Z"
+      xml:
+        name: object
+
+    UserRegister:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "nguyenduyphuong3103@gmail.com"
+        name:
+          type: string
+          example: "Nguyen Duy Phuong"
+        password:
+          type: string
+          example: "123456"
+        passwordConfirm:
+          type: string
+          example: "123456"
+      xml:
+        name: user
+
+    ReadUsers:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "e3936164-7caf-480d-949f-7d822ede4a61"
+        name:
+          type: string
+          example: "Nguyen Duy Phuong"
+      xml:
+        name: user
+    ChangePassword:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+          example: 000
+        newPassword:
+          type: string
+          example: 777
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "nguyenduyphuong310320@gmail.com"
+        password:
+          type: string
+          example: "000"
+      xml:
+        name: user
+    ConfirmUser:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "e3936164-7caf-480d-949f-7d822ede4a61"
+        name:
+          type: string
+          example: "nguyenduyphuong3103"
+        avatar:
+          type: string
+          example: null
+        email:
+          type: string
+          example: "nguyenduyphuong310320@gmail.com"
+        isLocked:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          example: "2024-05-20T03:31:40.769Z"
+        updatedAt:
+          type: string
+          example: "2024-05-20T03:32:35.442Z"
+      xml:
+        name: user
+
+    ReadProjects:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "bd4855fb-0843-49eb-9427-8725bffc2538"
+        name:
+          type: string
+          example: "first name"
+      xml:
+        name: project
+
+    SentMail:
+      type: object
+      properties:
+        accepted:
+          type: array
+          items:
+            type: string
+          example:
+            - nguyenduyphuong3103200@gmail.com
+        rejected:
+          type: array
+          items:
+            type: string
+          example:
+            -
+        ehlo:
+          type: array
+          items:
+            type: string
+          example:
+            - SIZE 35882577
+            - 8BITMIME
+            - AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+            - ENHANCEDSTATUSCODES
+            - PIPELINING
+            - CHUNKING
+            - SMTPUTF8
+        envelopeTime:
+          type: number
+          example: 858
+        messageTime:
+          type: number
+          example: 830
+        messageSize:
+          type: number
+          example: 758
+        response:
+          type: string
+          example:
+            - 250 2.0.0 OK  1715762165 98e67ed59e1d1-2b62863a5b2sm13149255a91.6 - gsmtp
+        envelope:
+          type: object
+          properties:
+            from:
+              type: string
+              example: no-reply@iot-callbot-node.com
+            to:
+              type: array
+              items:
+                type: string
+              example:
+                - nguyenduyphuong3103200@gmail.com
+        messageId:
+          type: string
+          example: <93c2adde-ce12-ee51-6fe5-41d8934660b1@iot-callbot-node.com>
+      xml:
+        name: user
+
+    Contact:
+      type: object
+      properties:
+        fullName:
+          type: string
+          example: "first name"
+        email:
+          type: string
+          example: "name@gamil.com"
+        phoneNumber:
+          type: string
+          example: "0123456789"
+        company:
+          type: string
+          example: "AAA company"
+        yourMessage:
+          type: string
+          example: "first text"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

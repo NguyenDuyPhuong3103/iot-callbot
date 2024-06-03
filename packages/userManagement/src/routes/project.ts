@@ -9,11 +9,6 @@ import {
   verifyProjectAccessToken,
 } from "../middleware/jwtServices";
 
-/*  CHƯA XONG: 
-      1./ Phần xem thông tin chi tiết project (3.1 - Project Management) - projectDetail
-      2./ Phần xem lịch sử chi tiết project (3.5 - View history) - projectHistory
-*/
-
 router.use(verifyUserAccessToken);
 
 /* Xem tất cả project và tim kiếm project */
@@ -28,7 +23,7 @@ router.get("/readProjects", ProjectController.readProjects);
               tên của project được gửi qua body
     Đầu ra: dự án đã được tạo và accessToken của dự án đó
 */
-router.post("/", ProjectController.createProject);
+router.post("/createProject", ProjectController.createProject);
 
 /* Xem chi tiết project */
 /*  Đầu vào:  id của user ở accessToken
@@ -48,7 +43,7 @@ router.get("/projectDetail/:id", ProjectController.projectDetail);
               tên mới của project
     Đầu ra: tên dự án đã được sửa
 */
-router.patch("/:id", ProjectController.editProject);
+router.patch("/editProject/:id", ProjectController.editProject);
 
 /* Làm mới refreshToken */
 /*  Đầu vào:  id của user ở accessToken

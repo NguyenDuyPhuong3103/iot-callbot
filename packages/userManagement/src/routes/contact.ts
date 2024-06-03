@@ -10,8 +10,8 @@ import {
 
 router.get("/", ContactController.readContacts);
 router.use(verifyUserAccessToken, isAdmin);
-router.post("/", ContactController.createContact);
-router.patch("/:id", ContactController.editContact);
-router.delete("/:id", ContactController.deleteContact);
+router.post("/createContact", ContactController.createContact);
+// router.patch("/:id", ContactController.editContact);
+// router.delete("/:id", ContactController.deleteContact);
 
 export default router;

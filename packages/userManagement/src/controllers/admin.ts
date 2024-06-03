@@ -7,7 +7,7 @@ import {
   LoginUserSchema,
   ForgotPasswordUserSchema,
 } from "../schemas/user";
-import { CreateServiceAdminSchema } from "./../schemas/service";
+import { CreateServiceAdminSchema } from "../schemas/service";
 import { StatusCodes } from "http-status-codes";
 import { RoleEnumType } from "../models/user";
 import { responseFormat } from "../utils/responseFormat";

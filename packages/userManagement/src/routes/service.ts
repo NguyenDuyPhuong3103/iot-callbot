@@ -12,7 +12,7 @@ router.get("/", ServiceController.readServices);
 router.use(verifyUserAccessToken);
 
 /* Tạo mới service */
-/*  Đầu vào:  thông tin của service được gửi qua body
+/*  Đầu vào: thông tin của service được gửi qua body
     Đầu ra: service mới đã được tạo
 */
 router.post(
@@ -30,8 +30,6 @@ router.patch(
   "/editServiceByUser/:projectId/:serviceId",
   ServiceController.editServiceByUser
 );
-
-router.use(isAdmin);
 
 /* Kích hoạt service */
 /*  Đầu vào:  id của user ở accessToken 

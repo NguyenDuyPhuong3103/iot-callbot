@@ -18,7 +18,7 @@ export const createContactSchema = object({
     phoneNumber: string({
       required_error: "Phone Number is required",
     }).refine(isValidPhoneNumber, "Invalid phone number"),
-    Company: string({
+    company: string({
       required_error: "Company is required",
     })
       .min(0, "Password must be more than 0 characters")

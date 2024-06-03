@@ -1,5 +1,5 @@
-import { History } from "./../models/history";
-import { getRepository, DeepPartial } from "typeorm";
+import { History } from "../models/history";
+import { getRepository, DeepPartial, IsNull } from "typeorm";
 import { Request, Response, NextFunction } from "express";
 import { Service, Project, User } from "../models";
 import {
@@ -64,6 +64,15 @@ class ServiceController {
         });
         await serviceRepository.save(newService);
 
+        const responseData = {
+          id: newService.id,
+          name: newService.name,
+          sumData: newService.sumData,
+          sumCost: newService.sumCost,
+          unpaid: newService.unpaid,
+          inProject: newService.inProject,
+        };
+
         if (!newService) {
           return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json(
             responseFormat(false, {
@@ -78,7 +87,7 @@ class ServiceController {
             {
               message: "Service registration successfully!!!",
             },
-            newService
+            responseData
           )
         );
       } else {
@@ -111,7 +120,13 @@ class ServiceController {
 
       const serviceRepository = getRepository(Service);
 
-      const services = await serviceRepository.find();
+      const services = await serviceRepository.find({
+        where: {
+          inProject: IsNull(),
+        },
+        select: ["name", "introduction", "information", "price"],
+      });
+
       if (!services) {
         return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json(
           responseFormat(false, {

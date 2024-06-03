@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import UserController from "../controllers/user";
-import { isUser } from "./../middleware/authorization";
+import { isUser } from "../middleware/authorization";
 import {
   RequestWithUser,
   verifyUserAccessToken,
@@ -11,10 +11,6 @@ import {
 import multer from "multer";
 
 const upload = multer({ dest: "uploads/" });
-
-/* Phần updateProfile chưa làm avatar
-
-*/
 
 router.get("/refreshToken", UserController.refreshToken);
 

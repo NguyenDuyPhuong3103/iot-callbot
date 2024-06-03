@@ -1,4 +1,4 @@
-import { Project } from "./../models/project";
+import { Project } from "../models/project";
 import express from "express";
 import UserRouter from "./user";
 import AdminRouter from "./admin";

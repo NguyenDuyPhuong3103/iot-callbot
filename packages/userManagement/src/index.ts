@@ -6,8 +6,14 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import Router from "./routes";
 import dbConfig from "./config/database";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yaml";
+import fs from "fs";
 import path from "path";
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+
+const file = fs.readFileSync(path.resolve("swagger.yaml"), "utf8");
+const swaggerDocument = YAML.parse(file);
 
 const PORT = process.env.PORT || 8000;
 
@@ -20,6 +26,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 app.use(express.static("public"));
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/api", Router);
 

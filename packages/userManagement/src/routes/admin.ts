@@ -10,23 +10,14 @@ import {
 
 router.use(verifyUserAccessToken, isAdmin);
 
-/*  CHƯA XONG: 
-      1./ Phần xem thông tin người dùng (3.1 - User Management) 
-      2./ Phần theo dõi lịch sử hoạt động (3.4 - User Management): tương tự như phần 3.5-Project Management 
-*/
-
 /*  Đầu vào:  page, limit và các searchText nếu có
     Đầu ra: trả về các userId và name của các user
 */
-router.get("/", AdminController.readUsers);
+router.get("/readUsers", AdminController.readUsers);
 
 /* Xem thông tin chi tiết user */
 /*  Đầu vào: id của user mà admin muốn xem
     Đầu ra: thông tin chi tiết của người dùng như dự án, dữ liệu dịch vụ và chi phí.
-  Lưu ý: cần trả về:
-    tên các project và các service trong projcet đó, thêm nữa trả về trạng thái hoạt động của từng service đó.
-    tổng các dữ liệu của từng service đó 
-    giá của từng service, tổng giá đã sử dụng của từng service và unpaid của từng service.
 */
 router.get("/readProfile/:id", AdminController.readProfileById);
 
@@ -35,7 +26,7 @@ router.get("/readProfile/:id", AdminController.readProfileById);
               email mới ở req.body
     Đầu ra: gửi thông báo đã thay đổi thành công email đến email cũ và email mới
 */
-router.patch("/:id", AdminController.editUserEmail);
+router.patch("/editUserEmail/:id", AdminController.editUserEmail);
 
 /* Khóa/mở khóa user */
 /*  Đầu vào: id của user mà admin muốn khóa/mở khóa 
@@ -47,10 +38,6 @@ router.patch("/lockUser/:id", AdminController.lockUser);
 /* Xem lịch sử */
 /*  Đầu vào: id của user
     Đầu ra: thông tin chi tiết về lịch sử user.
-  Lưu ý: Cần trả về
-    Từng service với ngày tạo, content và tên project của service đó
-    Tổng của từng service
-    */
 router.get("/userHistory/:id", AdminController.userHistory);
 
 /* Viết thêm */
